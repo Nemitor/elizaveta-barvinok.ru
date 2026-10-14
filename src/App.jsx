@@ -11,6 +11,17 @@ const img = (name) => {
 };
 
 const pdf = new URL("../assets/docs/architect.pdf", import.meta.url).href;
+const githubPagesPrefix = window.location.hostname.endsWith(".github.io")
+  ? "/elizaveta-barvinok.ru"
+  : "";
+const withBasePath = (path) => `${githubPagesPrefix}${path}` || "/";
+const getRoutePath = () => {
+  const path = window.location.pathname;
+  if (githubPagesPrefix && (path === githubPagesPrefix || path.startsWith(`${githubPagesPrefix}/`))) {
+    return path.slice(githubPagesPrefix.length) || "/";
+  }
+  return path;
+};
 
 const profile = {
   name: "Барвинок Елизавета Александровна",
@@ -143,17 +154,17 @@ const projects = [
 ];
 
 function App() {
-  const [path, setPath] = useState(window.location.pathname);
+  const [path, setPath] = useState(getRoutePath);
 
   useEffect(() => {
-    const onPopState = () => setPath(window.location.pathname);
+    const onPopState = () => setPath(getRoutePath());
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
   const navigate = (href) => {
-    window.history.pushState({}, "", href);
-    setPath(window.location.pathname);
+    window.history.pushState({}, "", withBasePath(href));
+    setPath(getRoutePath());
     window.scrollTo({ top: 0, behavior: "instant" });
   };
 
@@ -180,7 +191,7 @@ function InternalLink({ href, navigate, children, className, ariaLabel }) {
     <a
       aria-label={ariaLabel}
       className={className}
-      href={href}
+      href={withBasePath(href)}
       onClick={(event) => {
         event.preventDefault();
         navigate(href);
