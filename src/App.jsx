@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 const originalImages = new Map();
-const img = (name) => {
-  const preview = new URL(`../assets/portfolio/display/${name}`, import.meta.url).href;
+const img = (name, previewName = name) => {
+  const preview = new URL(`../assets/portfolio/display/${previewName}`, import.meta.url).href;
   originalImages.set(
     preview,
     new URL(`../assets/portfolio/${name}`, import.meta.url).href
@@ -10,7 +10,6 @@ const img = (name) => {
   return preview;
 };
 
-const pdf = new URL("../assets/docs/architect.pdf", import.meta.url).href;
 const githubPagesPrefix = window.location.hostname.endsWith(".github.io")
   ? "/elizaveta-barvinok.ru"
   : "";
@@ -26,15 +25,7 @@ const getRoutePath = () => {
 const profile = {
   name: "Барвинок Елизавета Александровна",
   role: "Архитектор-проектировщик",
-  intro:
-    "Проектирую гражданские и промышленные здания и сооружения. Работаю с проектной и рабочей документацией.",
-  experience:
-    "Опыт работы 1 год 6 месяцев. Инженер-проектировщик в СургутНИПИнефть, отдел генеральных планов, группа проектирования гражданских и промышленных зданий и сооружений.",
-  achievements: [
-    "Высшее строительное образование: бакалавриат и магистратура Сургутского государственного университета, оба диплома с отличием.",
-    "Разработка чертежей раздела генерального плана, ситуационных планов, планов инженерной подготовки территории, схем планировочной организации земельных участков, схем организации рельефа, планов благоустройства и сводных планов сетей инженерно-технического обеспечения.",
-    "Работа в AutoCAD и nanoCAD, средние навыки в Revit, базовые навыки nanoCAD GeoniCS."
-  ],
+  intro: "Занимаюсь проектированием гражданских и промышленных объектов",
   contacts: {
     phone: "+7 (912) 417-80-81",
     email: "elizavetabarvinok@mail.ru",
@@ -48,16 +39,19 @@ const projects = [
     title:
       "Высотное многофункциональное здание на Югорском тракте в городе Сургуте",
     place: "Сургут",
-    status: "Портфолио",
-    cover: img("surgut-visual-01.jpg"),
-    summary:
-      "Высотное многофункциональное здание с общественной частью, офисными этажами, гостиничным блоком, апартаментами и подземной парковкой.",
+    cover: img("Визуализация 1.png", "visualization-01.jpg"),
     files: [
       {
         group: "Визуализации",
         items: [
-          { title: "Визуализация 1", src: img("surgut-visual-01.jpg") },
-          { title: "Визуализация 2", src: img("surgut-visual-02.jpg") }
+          {
+            title: "Визуализация 1",
+            src: img("Визуализация 1.png", "visualization-01.jpg")
+          },
+          {
+            title: "Визуализация 2",
+            src: img("Визуализация 2.png", "visualization-02.jpg")
+          }
         ]
       },
       {
@@ -98,10 +92,7 @@ const projects = [
     title:
       "Жилое здание переменной этажности со встроенными помещениями общественного назначения в городе Сургуте",
     place: "Сургут",
-    status: "Портфолио",
     cover: img("residential-facade-1-12.jpg"),
-    summary:
-      "Жилое здание переменной этажности с блоками А, В и С, встроенными помещениями общественного назначения, подземной парковкой и полным комплектом проектной документации.",
     files: [
       {
         group: "Ситуация и генплан",
@@ -181,7 +172,6 @@ function App() {
           <HomePage navigate={navigate} />
         )}
       </main>
-      <Footer />
     </>
   );
 }
@@ -205,23 +195,15 @@ function InternalLink({ href, navigate, children, className, ariaLabel }) {
 function Header({ navigate }) {
   return (
     <header className="site-header">
-      <InternalLink
-        ariaLabel="На главную"
-        className="brand"
-        href="/"
-        navigate={navigate}
-      >
-        {profile.name}
-      </InternalLink>
       <nav className="main-nav" aria-label="Основная навигация">
         <InternalLink href="/" navigate={navigate}>
           Главная
         </InternalLink>
         <InternalLink href="/projects/yugorsky" navigate={navigate}>
-          Проект 01
+          Проект 1
         </InternalLink>
         <InternalLink href="/projects/variable-residential" navigate={navigate}>
-          Проект 02
+          Проект 2
         </InternalLink>
       </nav>
     </header>
@@ -243,7 +225,7 @@ function HomePage({ navigate }) {
 
       <section className="section">
         <div className="section-heading">
-          <p className="eyebrow">Portfolio</p>
+          <p className="eyebrow">Портфолио</p>
           <h2>Проекты</h2>
         </div>
         <div className="project-grid">
@@ -264,32 +246,15 @@ function HomePage({ navigate }) {
                 )}
               </div>
               <div className="project-card-text">
-                <span>{String(index + 1).padStart(2, "0")}</span>
+                <span>Проект {index + 1}</span>
                 <h3>{project.title}</h3>
-                <p>
-                  {project.place} · {project.status}
-                </p>
+                <p>{project.place}</p>
               </div>
             </InternalLink>
           ))}
         </div>
       </section>
 
-      <section className="section about">
-        <div className="section-heading">
-          <p className="eyebrow">Profile</p>
-          <h2>О себе</h2>
-        </div>
-        <div className="about-grid">
-          <p>{profile.intro}</p>
-          <p>{profile.experience}</p>
-          <div className="achievement-list">
-            {profile.achievements.map((achievement) => (
-              <p key={achievement}>{achievement}</p>
-            ))}
-          </div>
-        </div>
-      </section>
     </>
   );
 }
@@ -321,10 +286,8 @@ function ProjectPage({ project, navigate }) {
       </InternalLink>
       <div className="project-intro">
         <div>
-          <p className="eyebrow">{project.place}</p>
           <h2>{project.title}</h2>
         </div>
-        <p>{project.summary}</p>
       </div>
 
       {project.files.length > 0 ? (
@@ -353,17 +316,6 @@ function ProjectPage({ project, navigate }) {
         </div>
       )}
     </section>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="site-footer">
-      <span>{profile.name}</span>
-      <a href={pdf} target="_blank" rel="noreferrer">
-        PDF резюме
-      </a>
-    </footer>
   );
 }
 

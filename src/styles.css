@@ -41,7 +41,7 @@ img {
   background: rgba(247, 246, 241, 0.92);
   border-bottom: 1px solid var(--line);
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   left: 0;
   padding: 18px 28px;
   position: sticky;
